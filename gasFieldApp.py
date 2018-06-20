@@ -206,7 +206,7 @@ app.layout = html.Div(className='container-fluid', children=[
 
     html.Div(id='graphs', className="row", children=[
 
-        html.Div(className="three columns", children=[
+        html.Div(className="four columns", children=[
             dcc.Graph(
                 id='decline-vs-time',
                 figure={
@@ -234,7 +234,7 @@ app.layout = html.Div(className='container-fluid', children=[
             )
         ]),
 
-        html.Div(className="three columns", children=[
+        html.Div(className="four columns", children=[
             dcc.Graph(
                 id='prod-vs-time',
                 figure={
@@ -272,7 +272,7 @@ app.layout = html.Div(className='container-fluid', children=[
                 }
             )
         ]),
-        html.Div(className="three columns", children=[
+        html.Div(className="four columns", children=[
             dcc.Graph(
                 id='cost-vs-time',
                 figure={
@@ -389,7 +389,7 @@ app.layout = html.Div(className='container-fluid', children=[
              dash.dependencies.Input('inAveDecline', 'value'),
              dash.dependencies.Input('inGasPrice', 'value'),
              dash.dependencies.Input('inExchangeRate', 'value'),
-             dash.dependencies.Input('inCostToDrill', 'value'),g
+             dash.dependencies.Input('inCostToDrill', 'value'),
              dash.dependencies.Input('inCostToFrac', 'value'),
              dash.dependencies.Input('inCostToTieIn', 'value')
              ])
@@ -414,7 +414,7 @@ def update_graph(inSimTime, inTargetFlow, inNumRigs, inDrillTime, inWaitFracTime
         tArr, qArr, expenseArr, incomeArr, decArr = simulateField(params)
 
         return [
-        html.Div(className="three columns", children=[
+        html.Div(className="four columns", children=[
             dcc.Graph(
                 id='decline-vs-time',
                 figure={
@@ -442,7 +442,7 @@ def update_graph(inSimTime, inTargetFlow, inNumRigs, inDrillTime, inWaitFracTime
             )
         ]),
 
-        html.Div(className="three columns", children=[
+        html.Div(className="four columns", children=[
             dcc.Graph(
                 id='prod-vs-time',
                 figure={
@@ -480,7 +480,7 @@ def update_graph(inSimTime, inTargetFlow, inNumRigs, inDrillTime, inWaitFracTime
                 }
             )
         ]),
-        html.Div(className="three columns", children=[
+        html.Div(className="four columns", children=[
             dcc.Graph(
                 id='cost-vs-time',
                 figure={
