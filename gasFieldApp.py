@@ -113,6 +113,8 @@ def simulateField(params):
 
     expenseArr = []
     incomeArr = []
+    exposureArr = []
+    numWellArr = []
 
     fieldExpense = 0
     fieldIncome = 0
@@ -153,10 +155,12 @@ def simulateField(params):
         qArr.append(fieldFlow)
         expenseArr.append(fieldExpense)
         incomeArr.append(fieldIncome)
+        exposureArr.append(fieldIncome - fieldExpense)
+        numWellArr.append(len(field.wells))
 
         t += 1
 
-    return tArr, qArr, expenseArr, incomeArr, decArr
+    return tArr, qArr, expenseArr, incomeArr, decArr, exposureArr, numWellArr
 
 
 # Setup of Web App
@@ -179,22 +183,22 @@ app.css.append_css({'external_url': 'https://cdn.rawgit.com/plotly/dash-app-styl
 # INITIAL RUN OF SIM
 params = {
     'simTime': 5,
-    'tgtFlow': 10.0,
+    'tgtFlow': 25.0,
     'numRigs': 2,
     'drillTime': 30,
     'fracWaitTime': 60,
     'fracTime': 10,
     'pipeWaitTime': 160,
     'aveFlow': 1.0,
-    'aveDecline': 2,
-    'gasPrice': 3.0,
+    'aveDecline': 4,
+    'gasPrice': 10.0,
     'exchangeRate': 1.31,
     'costToDrill': 3.0,
     'costToFrac': 2.0,
     'costToTieIn': 0.5
 }
 
-tArr, qArr, expenseArr, incomeArr, decArr = simulateField(params)
+tArr, qArr, expenseArr, incomeArr, decArr, exposureArr, numWellArr = simulateField(params)
 
 app.layout = html.Div(className='container-fluid', children=[
 
@@ -226,7 +230,7 @@ app.layout = html.Div(className='container-fluid', children=[
                     'layout': go.Layout(
                         xaxis={'title': 'Field Days'},
                         yaxis={'title': 'Production (scf/day)'},
-                        margin={'l': 40, 'b': 40, 't': 10, 'r': 10},
+                        margin={'l': 60, 'b': 40, 't': 10, 'r': 10},
                         legend={'x': 0, 'y': 1},
                         hovermode='closest'
                     )
@@ -260,18 +264,36 @@ app.layout = html.Div(className='container-fluid', children=[
                                 'line': {'width': 0.5, 'color': 'red'}
                             },
                             name='Target Production'
+                        ),
+                        go.Scatter(
+                            x=tArr,
+                            y=numWellArr,
+                            mode='lines',
+                            opacity=0.7,
+                            marker={
+                                'size': 15,
+                                'line': {'width': 0.5, 'color': 'red'}
+                            },
+                            name='Well Count',
+                            yaxis='y2'
                         )
                     ],
                     'layout': go.Layout(
                         xaxis={'title': 'Field Days'},
                         yaxis={'title': 'Production (scf/day)'},
-                        margin={'l': 40, 'b': 40, 't': 10, 'r': 10},
+                        yaxis2={
+                            'title': 'Well Count',
+                            'overlaying': 'y',
+                            'side': 'right'
+                        },
+                        margin={'l': 60, 'b': 40, 't': 10, 'r': 60},
                         legend={'x': 0, 'y': 1},
                         hovermode='closest'
                     )
                 }
             )
         ]),
+
         html.Div(className="four columns", children=[
             dcc.Graph(
                 id='cost-vs-time',
@@ -298,12 +320,29 @@ app.layout = html.Div(className='container-fluid', children=[
                                 'line': {'width': 0.5, 'color': 'red'}
                             },
                             name='Total Income'
+                        ),
+                        go.Scatter(
+                            x=tArr,
+                            y=exposureArr,
+                            mode='lines',
+                            opacity=0.7,
+                            marker={
+                                'size': 15,
+                                'line': {'width': 0.5, 'color': 'red'}
+                            },
+                            name='Capital Exposure',
+                            yaxis='y2'
                         )
                     ],
                     'layout': go.Layout(
                         xaxis={'title': 'Field Days'},
                         yaxis={'title': 'Cost ($)'},
-                        margin={'l': 40, 'b': 40, 't': 10, 'r': 10},
+                        yaxis2={
+                            'title': 'Captial Exposure ($)',
+                            'overlaying': 'y',
+                            'side': 'right'
+                        },
+                        margin={'l': 60, 'b': 40, 't': 10, 'r': 60},
                         legend={'x': 0, 'y': 1},
                         hovermode='closest'
                     )
@@ -318,7 +357,7 @@ app.layout = html.Div(className='container-fluid', children=[
 
             html.Div(className="text-center", children=[
                 html.Label('Target Flow (TJ/Day)'),
-                dcc.Input(value='10.0', type='number', id='inTargetFlow'),
+                dcc.Input(value='25.0', type='number', id='inTargetFlow'),
 
                 html.Label('Simulation Time (years)'),
                 dcc.Input(value='5', type='number', id='inSimTime'),
@@ -348,7 +387,7 @@ app.layout = html.Div(className='container-fluid', children=[
                 dcc.Input(value='1.0', type='number', id='inAveFlow'),
 
                 html.Label('Ave Time to 10% Flow (years)'),
-                dcc.Input(value='2', type='number', id='inAveDecline')
+                dcc.Input(value='4', type='number', id='inAveDecline')
             ])
         ]),
 
@@ -357,7 +396,7 @@ app.layout = html.Div(className='container-fluid', children=[
 
             html.Div(className="text-center", children=[
                 html.Label('Gas Price ($USD/GJ)'),
-                dcc.Input(value='3.0', type='number', id='inGasPrice'),
+                dcc.Input(value='10.0', type='number', id='inGasPrice'),
 
                 html.Label('Exchange Rate ($AUD/$USD)'),
                 dcc.Input(value='1.31', type='number', id='inExchangeRate'),
@@ -411,7 +450,7 @@ def update_graph(inSimTime, inTargetFlow, inNumRigs, inDrillTime, inWaitFracTime
             'costToTieIn': float(inCostToTieIn)
         }
 
-        tArr, qArr, expenseArr, incomeArr, decArr = simulateField(params)
+        tArr, qArr, expenseArr, incomeArr, decArr, exposureArr, numWellArr = simulateField(params)
 
         return [
         html.Div(className="four columns", children=[
@@ -434,7 +473,7 @@ def update_graph(inSimTime, inTargetFlow, inNumRigs, inDrillTime, inWaitFracTime
                     'layout': go.Layout(
                         xaxis={'title': 'Field Days'},
                         yaxis={'title': 'Production (scf/day)'},
-                        margin={'l': 40, 'b': 40, 't': 10, 'r': 10},
+                        margin={'l': 60, 'b': 40, 't': 10, 'r': 10},
                         legend={'x': 0, 'y': 1},
                         hovermode='closest'
                     )
@@ -468,18 +507,36 @@ def update_graph(inSimTime, inTargetFlow, inNumRigs, inDrillTime, inWaitFracTime
                                 'line': {'width': 0.5, 'color': 'red'}
                             },
                             name='Target Production'
+                        ),
+                        go.Scatter(
+                            x=tArr,
+                            y=numWellArr,
+                            mode='lines',
+                            opacity=0.7,
+                            marker={
+                                'size': 15,
+                                'line': {'width': 0.5, 'color': 'red'}
+                            },
+                            name='Well Count',
+                            yaxis='y2'
                         )
                     ],
                     'layout': go.Layout(
                         xaxis={'title': 'Field Days'},
                         yaxis={'title': 'Production (scf/day)'},
-                        margin={'l': 40, 'b': 40, 't': 10, 'r': 10},
+                        yaxis2={
+                            'title': 'Well Count',
+                            'overlaying': 'y',
+                            'side': 'right'
+                        },
+                        margin={'l': 60, 'b': 40, 't': 10, 'r': 60},
                         legend={'x': 0, 'y': 1},
                         hovermode='closest'
                     )
                 }
             )
         ]),
+
         html.Div(className="four columns", children=[
             dcc.Graph(
                 id='cost-vs-time',
@@ -506,12 +563,29 @@ def update_graph(inSimTime, inTargetFlow, inNumRigs, inDrillTime, inWaitFracTime
                                 'line': {'width': 0.5, 'color': 'red'}
                             },
                             name='Total Income'
+                        ),
+                        go.Scatter(
+                            x=tArr,
+                            y=exposureArr,
+                            mode='lines',
+                            opacity=0.7,
+                            marker={
+                                'size': 15,
+                                'line': {'width': 0.5, 'color': 'red'}
+                            },
+                            name='Capital Exposure',
+                            yaxis='y2'
                         )
                     ],
                     'layout': go.Layout(
                         xaxis={'title': 'Field Days'},
                         yaxis={'title': 'Cost ($)'},
-                        margin={'l': 40, 'b': 40, 't': 10, 'r': 10},
+                        yaxis2={
+                            'title': 'Captial Exposure ($)',
+                            'overlaying': 'y',
+                            'side': 'right'
+                        },
+                        margin={'l': 60, 'b': 40, 't': 10, 'r': 60},
                         legend={'x': 0, 'y': 1},
                         hovermode='closest'
                     )
