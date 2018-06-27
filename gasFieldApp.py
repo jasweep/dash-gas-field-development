@@ -352,8 +352,8 @@ app.layout = html.Div(className='container-fluid', children=[
     ]),
 
     html.Div(className="row", children=[
-        html.Div(className="four columns", children=[
-            html.H3('Field Construction Parameters'),
+        html.Div(className="three columns", children=[
+            html.H3('Simulation Parameters'),
 
             html.Div(className="text-center", children=[
                 html.Label('Target Flow (TJ/Day)'),
@@ -365,6 +365,14 @@ app.layout = html.Div(className='container-fluid', children=[
                 html.Label('Number of Rigs'),
                 dcc.Input(value='2', type='number', id='inNumRigs'),
 
+            ])
+        ]),
+
+
+        html.Div(className="three columns", children=[
+            html.H3('Field Construction Parameters'),
+
+            html.Div(className="text-center", children=[
                 html.Label('Well Drilling Time (Days)'),
                 dcc.Input(value='30', type='number', id='inDrillTime'),
 
@@ -379,7 +387,7 @@ app.layout = html.Div(className='container-fluid', children=[
             ])
         ]),
 
-        html.Div(className="four columns", children=[
+        html.Div(className="three columns", children=[
             html.H3('Reservoir Parameters'),
 
             html.Div(className="text-center", children=[
@@ -391,7 +399,7 @@ app.layout = html.Div(className='container-fluid', children=[
             ])
         ]),
 
-        html.Div(className="four columns", children=[
+        html.Div(className="three columns", children=[
             html.H3('Economic Parameters'),
 
             html.Div(className="text-center", children=[
@@ -411,6 +419,14 @@ app.layout = html.Div(className='container-fluid', children=[
                 dcc.Input(value='0.5', type='number', id='inCostToTieIn')
             ])
         ])
+    ]),
+
+    html.Div(className="row", children=[
+        html.Div(className="six columns", children=[
+            html.H3('Operational Phases')
+        ]),
+
+        html.Div(className="six columns", children=[])
     ])
 
 ])
