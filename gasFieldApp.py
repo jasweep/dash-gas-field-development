@@ -8,6 +8,8 @@ import dash_core_components as dcc
 import dash_html_components as html
 import plotly.graph_objs as go
 
+from datetime import datetime as dt
+
 
 # Setup of Classes
 
@@ -102,8 +104,8 @@ def simulateField(params):
     t_init = 0.0
     t_fin = params['simTime']*365.0
 
-    # Algorithm
 
+    # Algorithm
     field = Field('Fairfields')
     field.wells = [Well(aveMaxFlow) for i in range(rigsOperating)]
 
@@ -195,7 +197,8 @@ params = {
     'exchangeRate': 1.31,
     'costToDrill': 3.0,
     'costToFrac': 2.0,
-    'costToTieIn': 0.5
+    'costToTieIn': 0.5,
+    'numPhases': 1
 }
 
 tArr, qArr, expenseArr, incomeArr, decArr, exposureArr, numWellArr = simulateField(params)
@@ -422,13 +425,64 @@ app.layout = html.Div(className='container-fluid', children=[
     ]),
 
     html.Div(className="row", children=[
-        html.Div(className="six columns", children=[
-            html.H3('Operational Phases')
-        ]),
+        html.H3('Operational Phases')
+    ]),
 
-        html.Div(className="six columns", children=[])
+    html.Div(className="phase-container", children=[
+        html.Div(className="row", children=[
+            html.Div(className="three columns", children=[
+                html.H4('Phase 1'),
+
+                html.Label('Phase Start'),
+                dcc.DatePickerSingle(id='inPhase1Start', date=dt(2018, 6, 23)),
+
+                html.Label('Number of Rigs'),
+                dcc.Input(value='1', type='number', id='inPhase1Rigs'),
+
+                html.Label('Number of Wells'),
+                dcc.Input(value='1', type='number', id='inPhase1Wells')
+            ]),
+
+            html.Div(className="three columns", children=[
+                html.H4('Phase 2'),
+
+                html.Label('Phase Start'),
+                dcc.DatePickerSingle(id='inPhase2Start', date=dt(2018, 6, 23)),
+
+                html.Label('Number of Rigs'),
+                dcc.Input(value='0', type='number', id='inPhase2Rigs'),
+
+                html.Label('Number of Wells'),
+                dcc.Input(value='0', type='number', id='inPhase2Wells')
+            ]),
+
+            html.Div(className="three columns", children=[
+                html.H4('Phase 3'),
+
+                html.Label('Phase Start'),
+                dcc.DatePickerSingle(id='inPhase3Start', date=dt(2018, 6, 23)),
+
+                html.Label('Number of Rigs'),
+                dcc.Input(value='0', type='number', id='inPhase3Rigs'),
+
+                html.Label('Number of Wells'),
+                dcc.Input(value='0', type='number', id='inPhase3Wells')
+            ]),
+
+            html.Div(className="three columns", children=[
+                html.H4('Phase 4'),
+
+                html.Label('Phase Start'),
+                dcc.DatePickerSingle(id='inPhase4Start', date=dt(2018, 6, 23)),
+
+                html.Label('Number of Rigs'),
+                dcc.Input(value='0', type='number', id='inPhase4Rigs'),
+
+                html.Label('Number of Wells'),
+                dcc.Input(value='0', type='number', id='inPhase4Wells')
+            ])
+        ])
     ])
-
 ])
 
 
@@ -610,6 +664,21 @@ def update_graph(inSimTime, inTargetFlow, inNumRigs, inDrillTime, inWaitFracTime
         ])
         ]
 
+# @app.callback(dash.dependencies.Output('phase-meta-container', component_property='children'),
+#              [dash.dependencies.Input('inNumPhases', 'value')])
+# def update_phases(inNumPhases):
+#         html.Div(className="phase-container", children=[
+#             html.Div(className="row", children=[
+#                 html.Div(className="three columns", children=[
+#                     html.Label('Phase Start'),
+#                     dcc.DatePickerSingle(id='inPhaseStart', date=dt(2018, 6, 23))
+#                 ]),
+#                 html.Div(className="three columns", children=[
+#                     html.Label('Number of Rigs'),
+#                     dcc.Input(value='1', type='number', id='inNumRigs')
+#                 ])
+#             ])
+#          ])
 
 
 if __name__ == '__main__':
