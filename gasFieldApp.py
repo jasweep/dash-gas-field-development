@@ -167,7 +167,8 @@ def simulateField(params):
 
 # Setup of Web App
 VALID_UNAME_PWORD_PAIRS =  [
-    ['Jack', 'Tristar1']
+    ['Jack', 'Tristar1'],
+    ['Butler', 'Fairfields']
 ]
 
 
@@ -367,6 +368,9 @@ app.layout = html.Div(className='container-fluid', children=[
 
                 html.Label('Number of Rigs'),
                 dcc.Input(value='2', type='number', id='inNumRigs'),
+
+                html.Label('Start Date'),
+                dcc.DatePickerSingle(id='inStartDate', date=dt(2018, 7, 2))
 
             ])
         ]),
